@@ -1,170 +1,58 @@
 import axios from 'axios';
-import { SongModel } from '../models/SongModel';
 
-export default class SongViewModel {
-  constructor() {
-    this.baseUrl = '/api';
-  }
+const API_URL = 'http://localhost:3000/api';
 
+class SongViewModel {
   async getSongs(params = {}) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/songs`, { params });
-      return {
-        songs: SongModel.fromArray(response.data.songs),
-        total: response.data.total,
-        page: response.data.page,
-        limit: response.data.limit,
-      };
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les cançons');
-    }
-  }
-
-  async getSongById(id) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/songs/${id}`);
-      return new SongModel(response.data);
-    } catch (error) {
-      throw new Error('No s\'ha pogut carregar la cançó');
-    }
-  }
-
-  async createSong(songData) {
-    try {
-      const model = new SongModel(songData);
-      const errors = model.validate();
-      if (Object.keys(errors).length > 0) {
-        throw new Error('Dades invàlides: ' + Object.values(errors).join(', '));
-      }
-      const response = await axios.post(`${this.baseUrl}/songs`, model.toJSON());
-      return new SongModel(response.data);
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'No s\'ha pogut crear la cançó');
-    }
-  }
-
-  async updateSong(id, songData) {
-    try {
-      const model = new SongModel(songData);
-      const errors = model.validate();
-      if (Object.keys(errors).length > 0) {
-        throw new Error('Dades invàlides: ' + Object.values(errors).join(', '));
-      }
-      const response = await axios.put(`${this.baseUrl}/songs/${id}`, model.toJSON());
-      return new SongModel(response.data);
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'No s\'ha pogut actualitzar la cançó');
-    }
-  }
-
-  async deleteSong(id) {
-    try {
-      await axios.delete(`${this.baseUrl}/songs/${id}`);
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'No s\'ha pogut eliminar la cançó');
-    }
-  }
-
-  async toggleFavorite(id) {
-    try {
-      const response = await axios.put(`${this.baseUrl}/songs/${id}/favorite`);
-      return new SongModel(response.data);
-    } catch (error) {
-      throw new Error('No s\'ha pogut canviar l\'estat de favorita');
-    }
+    const response = await axios.get(`${API_URL}/songs`, { params });
+    return response.data;
   }
 
   async getGenres() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/genres`);
-      return response.data;
-    } catch (error) {
-      return SongModel.genres;
-    }
+    const response = await axios.get(`${API_URL}/songs/genres`);
+    return response.data;
   }
 
-  async getArtists() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/artists`);
-      return response.data;
-    } catch (error) {
-      return [];
-    }
+  async createSong(song) {
+    const response = await axios.post(`${API_URL}/songs`, song);
+    return response.data;
   }
 
-  async getFavorites() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/favorites`);
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les favorites');
-    }
+  async updateSong(id, song) {
+    const response = await axios.put(`${API_URL}/songs/${id}`, song);
+    return response.data;
   }
 
-  async getRecent() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/recent`);
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les recents');
-    }
+  async deleteSong(id) {
+    const response = await axios.delete(`${API_URL}/songs/${id}`);
+    return response.data;
   }
 
-  async getTopRated() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/top-rated`);
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les millor valorades');
-    }
+  async getPlaylists(params = {}) {
+    const response = await axios.get(`${API_URL}/playlists`, { params });
+    return response.data;
   }
 
-  async searchSongs(query) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/songs`, { params: { search: query } });
-      return SongModel.fromArray(response.data.songs);
-    } catch (error) {
-      throw new Error('No s\'han pogut cercar les cançons');
-    }
+  async createPlaylist(playlist) {
+    const response = await axios.post(`${API_URL}/playlists`, playlist);
+    return response.data;
   }
 
-  async getByYearRange(startYear, endYear) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/year-range`, {
-        params: { startYear, endYear },
-      });
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les cançons per rang d\'any');
-    }
+  async updatePlaylist(id, playlist) {
+    console.log('Updating playlist via API:', { id, playlist });
+    const response = await axios.put(`${API_URL}/playlists/${id}`, playlist);
+    return response.data;
   }
 
-  async getByDuration(minDuration, maxDuration) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/duration`, {
-        params: { minDuration, maxDuration },
-      });
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les cançons per duració');
-    }
+  async deletePlaylist(id) {
+    const response = await axios.delete(`${API_URL}/playlists/${id}`);
+    return response.data;
   }
 
-  async getByTag(tag) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/tag`, { params: { tag } });
-      return SongModel.fromArray(response.data);
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les cançons per etiqueta');
-    }
-  }
-
-  async getStats() {
-    try {
-      const response = await axios.get(`${this.baseUrl}/stats`);
-      return response.data;
-    } catch (error) {
-      throw new Error('No s\'han pogut carregar les estadístiques');
-    }
+  async addSongToPlaylist(playlistId, songId) {
+    const response = await axios.post(`${API_URL}/playlists/${playlistId}/songs`, { songId });
+    return response.data;
   }
 }
+
+export default SongViewModel;

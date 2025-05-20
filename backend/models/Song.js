@@ -8,12 +8,19 @@ const songSchema = new mongoose.Schema({
   genre: {
     type: String,
     required: true,
-    enum: ['Pop', 'Rock', 'Jazz', 'Clàssica', 'Electrònica', 'Altres']
+    enum: ['Pop', 'Rock', 'Jazz', 'Clàssica', 'Electrònica', 'Reggaeton', 'Altres']
   },
-  duration: { type: Number, default: null, min: 0 },
+  duration: {
+    type: String,
+    default: null,
+    validate: {
+      validator: function (v) {
+        return v === null || /^\d+:[0-5]\d$/.test(v);
+      },
+      message: 'La duració ha de ser en format MM:SS'
+    }
+  },
   rating: { type: Number, default: 0, min: 0, max: 5 },
-  tags: { type: [String], default: [] },
-  isFavorite: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 
