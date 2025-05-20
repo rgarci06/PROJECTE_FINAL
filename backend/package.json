@@ -4,10 +4,12 @@
     "description": "Backend per al Gestor de Música",
     "main": "app.js",
     "scripts": {
-      "start": "node app.js"
+        "start": "node app.js"
     },
     "dependencies": {
-      "express": "^4.18.2",
-      "mongoose": "^7.6.3"
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "express-validator": "^7.2.1",
+        "mongoose": "^7.6.3"
     }
-  }
+}
