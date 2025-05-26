@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-spotify-black text-white font-inter;
+  margin: 0;
+}
+
+a {
+  @apply transition-colors duration-200;
+}
+
+button {
+  @apply transition-all duration-200;
+}
+
+table tr {
+  @apply transition-colors duration-200;
+}
